@@ -248,8 +248,11 @@ Recorder = (function () {
     record: {}
   }
   
-  async function Recorder(target, params) {
-    let file = params.file || false;
+  function Recorder(target, params) {
+    !params ? params = {record: false, file: false, playerMode: true} : !params.record ? params.playerMode = true : void 0;
+    let file = params.file;
+    if(file instanceof File)
+      file = window.URL.createObjectURL(file)
     
     const id = 'player_' + Math.round(Math.random() * 1000000)
     
@@ -257,9 +260,9 @@ Recorder = (function () {
     player.id = id;
     player.classList = 'player'
     const record = document.createElement('button');
-    record.classList = `record ${file ? 'hide' : ''}`;
+    record.classList = `record ${(file || params.playerMode) ? 'hide' : ''}`;
     const play = document.createElement('button');
-    play.classList = `play ${!file ? 'hide' : ''}`;
+    play.classList = `play ${(!file && !params.playerMode) ? 'hide' : ''}`;
     const pause = document.createElement('button');
     pause.classList = `pause hide`;
     const stop = document.createElement('button');
@@ -284,7 +287,7 @@ Recorder = (function () {
     progress.setAttribute('value', 1)
     progress.setAttribute('max', 100)
     const timer = document.createElement('div')
-    timer.classList = `timer ${!file ? 'hide' : ''}`
+    timer.classList = `timer ${(file || params.playerMode) ? '' : 'hide'}`
     const current = document.createElement('span')
     current.classList = 'current'
     current.innerHTML = '00:00'
@@ -295,14 +298,14 @@ Recorder = (function () {
     timer.append(" / ")
     timer.append(total)
     const recordTime = document.createElement('div')
-    recordTime.classList = `record_time ${(file || params.record) ? 'hide' : ''}`
+    recordTime.classList = `record_time ${!params.record ? 'hide' : ''}`
     const recordTotal = document.createElement('span')
     recordTotal.classList = 'total'
     recordTotal.innerHTML = '00:00'
     recordTime.append(recordTotal)
     const remove = document.createElement('a')
-    !file && remove.setAttribute('disabled', true)
-    remove.classList = `close link ${!params.record ? 'hide' : ''}`
+    remove.setAttribute('disabled', true)
+    remove.classList = `close link ${(!params.record) ? 'hide' : ''}`
     remove.setAttribute('title', 'Delete')
     remove.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\n' +
       '\t viewBox="0 0 250 250" width="15" height="15" xml:space="preserve">\n' +
@@ -315,7 +318,8 @@ Recorder = (function () {
       '</g>\n' +
       '</svg>\n'
     const download = document.createElement('a')
-    !file && download.setAttribute('disabled', true)
+    params.playerMode ? download.style.right = 0 : void 0;
+    download.setAttribute('disabled', true)
     download.classList = `download link `
     download.setAttribute('title', 'Download')
     download.innerHTML = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"\n' +
@@ -363,6 +367,8 @@ Recorder = (function () {
           $player.querySelector('.timer').classList.remove('hide');
           $player.querySelector('progress').style.width = '150px';
           $player.querySelector('.record_time').classList.add('hide');
+          $player.querySelector('.download').removeAttribute('disabled');
+          $player.querySelector('.close').removeAttribute('disabled');
           player_audio.addEventListener('timeupdate', (e) => {
             const secs = e.target.currentTime
             updatetime(secs)
@@ -524,7 +530,7 @@ Recorder = (function () {
         window.URL.revokeObjectURL(url);
         document.getElementById(id).remove();
       }
-      if (!!$player) {
+      if ($player) {
         if (file) {
           audioInfo(file, $player)
         }
@@ -573,6 +579,11 @@ Recorder = (function () {
       }
     }, 300)
     target.append(player);
+    return {
+      test: ()=>{
+        alert('yo')
+      }
+    }
   }
   
   return Recorder

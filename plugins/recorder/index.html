@@ -10,7 +10,9 @@
   <script src="Recorder.js"></script>
 </head>
 <body>
-<div id="app"></div>
+<div id="app">
+  <input type="file">
+</div>
 <style>
   
   * {
@@ -27,8 +29,10 @@
   #app {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 30px;
   }
 </style>
 

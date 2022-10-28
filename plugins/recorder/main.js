@@ -1,8 +1,14 @@
 window.onload = () => {
   const app = document.getElementById('app');
-  const heroku = 'https://morning-gorge-70271.herokuapp.com/'
-  // const recorder = Recorder(app, {file: 'eric.mp3'})
-  Recorder(app, {record: true, file: '/plugins/recorder/eric.mp3'})
-  // Recorder(app, {record: true, file: 'https://versusdec.github.io/eric.mp3'})
-  
+  const recorder = Recorder(app)
+  const input = document.querySelector('input')
+  input.addEventListener('change', function(e){
+    const file = e.target.files[0];
+    // Recorder(app, {file: file})
+  })
+  // Recorder(app, {record: true, file: '/plugins/recorder/eric.mp3'})
+  // Recorder(app, {record: false, file: '/plugins/recorder/eric.mp3'})
+  // Recorder(app, {record: true})
+  // Recorder(app, {file: '/plugins/recorder/eric.mp3'})
+  // Recorder(app, {record: true})
 }
